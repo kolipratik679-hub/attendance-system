@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Attendance - Krystal Attendance</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <header class="app-header">
+        <div class="container header-content">
+            <a href="dashboard.html" class="brand">
+                <img src="assets/images/krystal-logo.png" alt="Krystal Logo" class="brand-logo">
+                <span style="display: none; @media (min-width: 640px) { display: inline; }">KRYSTAL ATTENDANCE</span>
+            </a>
+            <div style="display: flex; align-items: center; gap: 1rem;">
+                <span class="shift-badge">Morning Shift</span>
+                <a href="index.html" class="btn btn-outline btn-sm" title="Logout">
+                    <i class="fa-solid fa-arrow-right-from-bracket"></i>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <main class="container">
+        <!-- Top Controls -->
+        <div class="action-bar">
+            <div class="action-bar-left" style="flex: 1;">
+                <div style="position: relative; width: 100%; max-width: 400px;">
+                    <i class="fa-solid fa-magnifying-glass" style="position: absolute; left: 1rem; top: 50%; transform: translateY(-50%); color: var(--text-muted);"></i>
+                    <input type="text" class="form-control" placeholder="Search by Name or ID..." style="padding-left: 2.5rem; width: 100%;">
+                </div>
+            </div>
+            <div class="action-bar-right">
+                <input type="date" class="form-control" id="attendance-date">
+            </div>
+        </div>
+
+        <!-- Add Form -->
+        <section class="card">
+            <header class="card-header">
+                <h3>Add Staff Member</h3>
+            </header>
+            <form action="#" method="POST" class="form-grid">
+                <div class="form-group" style="margin-bottom: 0;">
+                    <label for="staff-name" class="form-label">Full Name</label>
+                    <input type="text" id="staff-name" class="form-control" placeholder="John Doe" required>
+                </div>
+                <div class="form-group" style="margin-bottom: 0;">
+                    <label for="staff-id" class="form-label">Staff ID</label>
+                    <input type="number" id="staff-id" class="form-control" placeholder="001" required>
+                </div>
+                <div class="form-group" style="margin-bottom: 0;">
+                    <label for="staff-post" class="form-label">Post</label>
+                    <select id="staff-post" class="form-control" required>
+                        <option value="" disabled selected>Select Post...</option>
+                        <option value="incharge">Incharge</option>
+                        <option value="supervisor">Supervisor</option>
+                        <option value="bouncer">Bouncer</option>
+                        <option value="guard">Guard</option>
+                        <option value="driver">Driver</option>
+                    </select>
+                </div>
+                <div class="form-group" style="margin-bottom: 0;">
+                    <button type="submit" class="btn btn-primary w-full" style="height: 46px;">
+                        <i class="fa-solid fa-plus"></i> Add
+                    </button>
+                </div>
+            </form>
+        </section>
+
+        <!-- Current List -->
+        <section class="card">
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th style="width: 60px;">#</th>
+                            <th>Name</th>
+                            <th>ID</th>
+                            <th>Post</th>
+                            <th style="text-align: right; width: 120px;">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>1</td>
+                            <td><i class="fa-solid fa-user-shield" style="color: var(--text-muted); margin-right: 8px;"></i> Alex Johnson</td>
+                            <td>042</td>
+                            <td>Guard</td>
+                            <td style="text-align: right;">
+                                <div class="flex justify-end gap-2">
+                                    <button class="btn btn-outline btn-icon" title="Edit">
+                                        <i class="fa-solid fa-pen"></i>
+                                    </button>
+                                    <button class="btn btn-danger btn-icon" title="Delete">
+                                        <i class="fa-regular fa-trash-can"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>2</td>
+                            <td><i class="fa-solid fa-user-tie" style="color: var(--text-muted); margin-right: 8px;"></i> Sarah Williams</td>
+                            <td>015</td>
+                            <td>Supervisor</td>
+                            <td style="text-align: right;">
+                                <div class="flex justify-end gap-2">
+                                    <button class="btn btn-outline btn-icon" title="Edit">
+                                        <i class="fa-solid fa-pen"></i>
+                                    </button>
+                                    <button class="btn btn-danger btn-icon" title="Delete">
+                                        <i class="fa-regular fa-trash-can"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>3</td>
+                            <td><i class="fa-solid fa-user-ninja" style="color: var(--text-muted); margin-right: 8px;"></i> Mike Tyson</td>
+                            <td>089</td>
+                            <td>Bouncer</td>
+                            <td style="text-align: right;">
+                                <div class="flex justify-end gap-2">
+                                    <button class="btn btn-outline btn-icon" title="Edit">
+                                        <i class="fa-solid fa-pen"></i>
+                                    </button>
+                                    <button class="btn btn-danger btn-icon" title="Delete">
+                                        <i class="fa-regular fa-trash-can"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Bottom Actions -->
+        <div class="action-bar" style="justify-content: center; gap: 1rem; flex-wrap: wrap; background: transparent; box-shadow: none; padding: 0;">
+            <a href="preview.html" class="btn btn-outline">
+                <i class="fa-solid fa-eye"></i> Preview
+            </a>
+            <button class="btn btn-outline">
+                <i class="fa-solid fa-file-csv"></i> Export CSV
+            </button>
+            <button class="btn btn-outline">
+                <i class="fa-solid fa-file-pdf"></i> Download PDF
+            </button>
+            <a href="dashboard.html" class="btn btn-success">
+                <i class="fa-solid fa-check-double"></i> Final Save
+            </a>
+        </div>
+    </main>
+
+    <script src="js/app.js"></script>
+</body>
+</html>
