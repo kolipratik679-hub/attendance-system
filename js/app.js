@@ -83,10 +83,11 @@ function downloadFile(content, filename, mimeType) {
 
 // Generate CSV string from employee array
 function generateCsv(employees, date) {
-    let csv = 'Serial Number,Name,ID,Post\n';
+    let csv = 'Serial Number,Name,ID,Post,Status\n';
     employees.forEach((staff, i) => {
         const post = staff.post.charAt(0).toUpperCase() + staff.post.slice(1);
-        csv += (i + 1) + ',"' + staff.name + '",' + staff.id + ',' + post + '\n';
+        const status = staff.status ? (staff.status.charAt(0).toUpperCase() + staff.status.slice(1)) : 'Present';
+        csv += (i + 1) + ',"' + staff.name + '",' + staff.id + ',' + post + ',' + status + '\n';
     });
     return csv;
 }
@@ -205,6 +206,7 @@ function initAddAttendance() {
     const nameInput = document.getElementById('staff-name');
     const idInput = document.getElementById('staff-id');
     const postSelect = document.getElementById('staff-post');
+    const statusSelect = document.getElementById('staff-status');
     const submitBtn = form.querySelector('button[type="submit"]');
     const tbody = document.querySelector('.table-responsive tbody');
     const searchInput = document.querySelector('.action-bar-left input[type="text"]');
@@ -233,17 +235,6 @@ function initAddAttendance() {
             }
         }
         localStorage.removeItem('editRecordIndex');
-    } else {
-        // Scrape initial hardcoded data from the table (first load only if no edit)
-        Array.from(tbody.querySelectorAll('tr')).forEach(tr => {
-            const tds = tr.querySelectorAll('td');
-            if (tds.length === 5) {
-                const name = tds[1].textContent.trim();
-                const id = tds[2].textContent.trim();
-                const post = tds[3].textContent.trim();
-                attendanceData.push({ name, id, post });
-            }
-        });
     }
 
     /* -- Render Table -- */
@@ -260,12 +251,22 @@ function initAddAttendance() {
             const iconClass = getPostIcon(staff.post);
             const displayPost = staff.post.charAt(0).toUpperCase() + staff.post.slice(1);
 
+            let statusBadge = '';
+            if (staff.status === 'absent') {
+                statusBadge = '<span class="badge badge-danger">Absent</span>';
+            } else if (staff.status === 'halfday') {
+                statusBadge = '<span class="badge badge-warning" style="background: #f59e0b; color: white;">Half Day</span>';
+            } else {
+                statusBadge = '<span class="badge badge-success">Present</span>';
+            }
+
             const tr = document.createElement('tr');
             tr.innerHTML =
                 '<td>' + (serial++) + '</td>' +
                 '<td><i class="fa-solid ' + iconClass + '" style="color: var(--text-muted); margin-right: 8px;"></i> ' + staff.name + '</td>' +
                 '<td>' + staff.id + '</td>' +
                 '<td>' + displayPost + '</td>' +
+                '<td>' + statusBadge + '</td>' +
                 '<td style="text-align: right;">' +
                     '<div class="flex justify-end gap-2">' +
                         '<button type="button" class="btn btn-outline btn-icon edit-btn" data-index="' + index + '" title="Edit">' +
@@ -303,22 +304,25 @@ function initAddAttendance() {
         const name = nameInput.value.trim();
         const id = idInput.value.trim();
         const post = postSelect.value;
+        const status = statusSelect.value;
 
         if (!name) { alert('Please enter a name.'); return; }
         if (!id || isNaN(id)) { alert('Please enter a valid numeric ID.'); return; }
         if (!post) { alert('Please select a post.'); return; }
+        if (!status) { alert('Please select a status.'); return; }
 
         if (editIndex > -1) {
-            attendanceData[editIndex] = { name, id, post };
+            attendanceData[editIndex] = { name, id, post, status };
             editIndex = -1;
             submitBtn.innerHTML = '<i class="fa-solid fa-plus"></i> Add';
         } else {
-            attendanceData.push({ name, id, post });
+            attendanceData.push({ name, id, post, status });
         }
 
         nameInput.value = '';
         idInput.value = '';
         postSelect.value = '';
+        statusSelect.value = 'present';
         renderTable();
     });
 
@@ -328,6 +332,7 @@ function initAddAttendance() {
         nameInput.value = staff.name;
         idInput.value = staff.id;
         postSelect.value = staff.post.toLowerCase();
+        statusSelect.value = staff.status || 'present';
         editIndex = index;
         submitBtn.innerHTML = '<i class="fa-solid fa-check"></i> Update';
         nameInput.focus();
@@ -342,6 +347,7 @@ function initAddAttendance() {
             nameInput.value = '';
             idInput.value = '';
             postSelect.value = '';
+            statusSelect.value = 'present';
             submitBtn.innerHTML = '<i class="fa-solid fa-plus"></i> Add';
         } else if (editIndex > index) {
             editIndex--; // adjust index after splice
@@ -446,14 +452,12 @@ function initAddAttendance() {
 
 function initPreview() {
     const dataStr = localStorage.getItem('previewData');
-    if (!dataStr) {
-        // No data to preview
-        return;
-    }
+    const previewPayload = dataStr ? JSON.parse(dataStr) : null;
+    
+    console.log(previewPayload);
 
-    const previewPayload = JSON.parse(dataStr);
-    const attendanceData = previewPayload.employees || [];
-    const previewDate = previewPayload.date || '';
+    const attendanceData = previewPayload ? (previewPayload.employees || []) : [];
+    const previewDate = previewPayload ? (previewPayload.date || '') : '';
 
     // Update the date badge in header
     const dateBadge = document.querySelector('.header-content .badge');
@@ -498,19 +502,25 @@ function initPreview() {
 
         const group = groupedData[postKey] || [];
         const total = group.length;
-        const present = total;
-        const absent = 0;
+        
+        let presentCount = 0;
+        let absentCount = 0;
+
+        group.forEach(staff => {
+            if (staff.status === 'absent') absentCount++;
+            else presentCount++; // present and halfday count as present/partial present in stats
+        });
 
         totalStaff += total;
-        totalPresent += present;
-        totalAbsent += absent;
+        totalPresent += presentCount;
+        totalAbsent += absentCount;
 
         // Update stat boxes
         const statValues = section.querySelectorAll('.stat-value');
         if (statValues.length >= 3) {
             statValues[0].textContent = total;
-            statValues[1].textContent = present;
-            statValues[2].textContent = absent;
+            statValues[1].textContent = presentCount;
+            statValues[2].textContent = absentCount;
         }
 
         // Update table body
@@ -520,15 +530,24 @@ function initPreview() {
 
             if (group.length === 0) {
                 const tr = document.createElement('tr');
-                tr.innerHTML = '<td colspan="3" style="text-align: center; color: var(--text-muted);">No ' + postKey + 's present.</td>';
+                tr.innerHTML = '<td colspan="3" style="text-align: center; color: var(--text-muted);">No data available</td>';
                 tbody.appendChild(tr);
             } else {
                 group.forEach(staff => {
+                    let statusBadge = '';
+                    if (staff.status === 'absent') {
+                        statusBadge = '<span class="badge badge-danger">Absent</span>';
+                    } else if (staff.status === 'halfday') {
+                        statusBadge = '<span class="badge badge-warning" style="background: #f59e0b; color: white;">Half Day</span>';
+                    } else {
+                        statusBadge = '<span class="badge badge-success">Present</span>';
+                    }
+
                     const tr = document.createElement('tr');
                     tr.innerHTML =
                         '<td>' + staff.id + '</td>' +
                         '<td>' + staff.name + '</td>' +
-                        '<td style="text-align: right;"><span class="badge badge-success">Present</span></td>';
+                        '<td style="text-align: right;">' + statusBadge + '</td>';
                     tbody.appendChild(tr);
                 });
             }

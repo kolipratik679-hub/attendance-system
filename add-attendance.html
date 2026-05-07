@@ -63,6 +63,14 @@
                     </select>
                 </div>
                 <div class="form-group" style="margin-bottom: 0;">
+                    <label for="staff-status" class="form-label">Status</label>
+                    <select id="staff-status" class="form-control" required>
+                        <option value="present" selected>Present</option>
+                        <option value="absent">Absent</option>
+                        <option value="halfday">Half Day</option>
+                    </select>
+                </div>
+                <div class="form-group" style="margin-bottom: 0;">
                     <button type="submit" class="btn btn-primary w-full" style="height: 46px;">
                         <i class="fa-solid fa-plus"></i> Add
                     </button>
@@ -80,6 +88,7 @@
                             <th>Name</th>
                             <th>ID</th>
                             <th>Post</th>
+                            <th>Status</th>
                             <th style="text-align: right; width: 120px;">Actions</th>
                         </tr>
                     </thead>
@@ -89,6 +98,7 @@
                             <td><i class="fa-solid fa-user-shield" style="color: var(--text-muted); margin-right: 8px;"></i> Alex Johnson</td>
                             <td>042</td>
                             <td>Guard</td>
+                            <td><span class="badge badge-success">Present</span></td>
                             <td style="text-align: right;">
                                 <div class="flex justify-end gap-2">
                                     <button class="btn btn-outline btn-icon" title="Edit">
@@ -105,6 +115,7 @@
                             <td><i class="fa-solid fa-user-tie" style="color: var(--text-muted); margin-right: 8px;"></i> Sarah Williams</td>
                             <td>015</td>
                             <td>Supervisor</td>
+                            <td><span class="badge badge-success">Present</span></td>
                             <td style="text-align: right;">
                                 <div class="flex justify-end gap-2">
                                     <button class="btn btn-outline btn-icon" title="Edit">
@@ -121,6 +132,7 @@
                             <td><i class="fa-solid fa-user-ninja" style="color: var(--text-muted); margin-right: 8px;"></i> Mike Tyson</td>
                             <td>089</td>
                             <td>Bouncer</td>
+                            <td><span class="badge badge-success">Present</span></td>
                             <td style="text-align: right;">
                                 <div class="flex justify-end gap-2">
                                     <button class="btn btn-outline btn-icon" title="Edit">
